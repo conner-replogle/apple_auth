@@ -66,7 +66,6 @@ impl AppleAuth{
 
     pub async fn access_token(&self,code:String) -> Result<AppleResponsePayload, AppleAuthError>{
         let token = self.client.generate()?;
-      
         let payload = AppleRequestPayload{
             grant_type: "authorization_code",
             code: &code,
@@ -80,7 +79,7 @@ impl AppleAuth{
             .form(&payload)
             .send().await?
             .json().await?;
-
+        
         return Ok(res);
         
     
