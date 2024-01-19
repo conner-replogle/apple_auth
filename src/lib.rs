@@ -1,7 +1,7 @@
-mod apple_client_secret;
-mod apple_auth;
-mod apple_config;
-mod apple_error;
+pub mod apple_client_secret;
+pub mod apple_auth;
+pub mod apple_config;
+pub mod apple_error;
 #[cfg(test)]
 mod tests {
     use super::*;

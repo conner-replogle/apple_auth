@@ -2,13 +2,13 @@ use std::collections::BTreeMap;
 use std::io;
 use std::path::{Path, PathBuf};
 
+use jsonwebtoken::{encode, EncodingKey, Header,Algorithm};
 use serde::{Deserialize, Serialize};
 use hmac::{Hmac, Mac};
-use jwt::{AlgorithmType, Header, PKeyWithDigest, SignWithKey, Token, VerifyWithKey};
 use openssl::hash::MessageDigest;
-use openssl::pkey::PKey;
+use openssl::pkey::{Id, PKey};
 
-use crate::apple_config::AppleConfig;
+use crate::apple_config::{AppleConfig, PrivateKeyLocation};
 use crate::apple_error::AppleAuthError;
 #[derive(Debug, Serialize, Deserialize)]
 struct Claims<'a> {
@@ -19,12 +19,8 @@ struct Claims<'a> {
     sub: &'a str,
 }
 
-#[derive(Clone)]
-pub enum PrivateKeyLocation{
-    File(PathBuf),
-    Text(String)
-}
 
+#[derive(Debug, Clone)]
 pub struct AppleClientSecret{
     config: AppleConfig,
     priv_key:PrivateKeyLocation
@@ -51,7 +47,7 @@ impl AppleClientSecret{
         
     }
 
-    fn generate_token(&self,client_id: &str,team_id:&str,private_key: &str,expiration:u64,key_id: &str) -> Result<String,jwt::Error>{
+    fn generate_token(&self,client_id: &str,team_id:&str,private_key: &str,expiration:u64,key_id: &str) -> Result<String,jsonwebtoken::errors::Error>{
         let claims = Claims{
             iss: team_id,
             iat: (chrono::Utc::now().timestamp_millis()/1000) as u64,
@@ -59,20 +55,11 @@ impl AppleClientSecret{
             aud: "https://appleid.apple.com",
             sub: client_id,
         };
+        let mut header = Header::new(Algorithm::ES256);
+        header.kid = Some(key_id.to_string());
+        let token = encode(&header, &claims, &EncodingKey::from_ec_pem(private_key.as_bytes()).unwrap()).unwrap();
 
-        let header = Header {
-            algorithm: AlgorithmType::Es256,
-            key_id: Some(key_id.to_string()),
-            ..Default::default()
-        };
         
-        let signing_key = PKeyWithDigest {
-            digest: MessageDigest::sha256(),
-            key: PKey::private_key_from_pem(
-                private_key.as_bytes()
-            )
-            .unwrap(),
-        };
-        return Token::new(header, claims).sign_with_key(&signing_key).map(|a| a.as_str().to_string());
+        return Ok(token);
     }
 }

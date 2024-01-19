@@ -1,13 +1,12 @@
 use std::{fmt::LowerHex, path::{Path, PathBuf}};
 use serde::{Deserialize, Serialize};
 use url::Url;
-use jwt::{algorithm::rust_crypto, ToBase64};
 use openssl::rand::rand_bytes;
 
-use crate::{apple_client_secret::{AppleClientSecret, PrivateKeyLocation}, apple_config::AppleConfig, apple_error::AppleAuthError};
+use crate::{apple_client_secret::{AppleClientSecret}, apple_config::{AppleConfig,PrivateKeyLocation}, apple_error::AppleAuthError};
 
-#[derive(Serialize)]
-struct AppleRequestPayload<'a>{
+#[derive(Serialize,Debug,Clone)]
+pub struct AppleRequestPayload<'a>{
     grant_type: &'a str,
     code:  &'a str,
     redirect_uri:  &'a str,
@@ -16,17 +15,17 @@ struct AppleRequestPayload<'a>{
 }
 
 #[derive(Deserialize,Debug)]
-struct AppleResponsePayload{
-    access_token: String,
-    expires_in: u64,
-    id_token: String,
-    refresh_token: String,
-    token_type: String,
+pub struct AppleResponsePayload{
+    pub access_token: String,
+    pub expires_in: u64,
+    pub id_token: String,
+    pub refresh_token: String,
+    pub token_type: String,
 }
 
-
+#[derive(Debug,Clone)]
 pub struct AppleAuth{
-    config: AppleConfig,
+    pub config: AppleConfig,
     state: String,
     client: AppleClientSecret
 }
@@ -60,7 +59,7 @@ impl AppleAuth{
         return url;
     }
 
-    pub async fn accessToken(&mut self,code:String) -> Result<AppleResponsePayload, AppleAuthError>{
+    pub async fn accessToken(&self,code:String) -> Result<AppleResponsePayload, AppleAuthError>{
         let token = self.client.generate()?;
       
         let payload = AppleRequestPayload{

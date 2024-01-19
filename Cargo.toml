@@ -10,7 +10,7 @@ chrono = "0.4.31"
 hex = "0.4.3"
 hmac = "0.12.1"
 jose-jwa = "0.1.2"
-jwt = {version= "0.16.0", features = ["openssl"] }
+jsonwebtoken = {version ="9.2.0",features = ["use_pem"]}
 openssl = "0.10.62"
 rand = "0.8.5"
 reqwest = { version = "0.11.23", features = ["json"] }

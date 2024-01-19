@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 
 #[derive(Debug, Clone)]
 pub struct AppleConfig{
@@ -6,4 +8,10 @@ pub struct AppleConfig{
     pub redirect_uri: String,
     pub key_id: String,
     pub scope: String
+}
+
+#[derive(Clone,Debug)]
+pub enum PrivateKeyLocation{
+    File(PathBuf),
+    Text(String)
 }
