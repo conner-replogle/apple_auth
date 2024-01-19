@@ -4,7 +4,7 @@ Used for sign in with apple.
 
 Api is the same as the JS version besides some diffrences with the config and private key. Any contributions are welcome
 
-
+(Setup)[https://github.com/ananay/apple-auth/blob/master/SETUP.md]
 ```
     //check the apple-auth js docs for getting this
     let config = AppleConfig{ 
