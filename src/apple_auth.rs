@@ -44,22 +44,22 @@ impl AppleAuth{
     }
     
 
-    pub fn login_url(&mut self) -> Url{
-        let mut buf: [u8; 5] = [0u8; 5];
-        rand_bytes(&mut buf).unwrap();
-        self.state = hex::encode(buf);
-        let mut url = Url::parse("https://appleid.apple.com/auth/authorize").unwrap();
-        url.query_pairs_mut()
-            .append_pair("response_type", "code id_token")
-            .append_pair("client_id", &self.config.client_id)
-            .append_pair("redirect_uri", &self.config.redirect_uri)
-            .append_pair("state", &self.state)
-            .append_pair("scope", &self.config.scope)
-            .append_pair("response_mode", "form_post");
-        return url;
-    }
+    // pub fn login_url(&mut self) -> Url{
+    //     let mut buf: [u8; 5] = [0u8; 5];
+    //     rand_bytes(&mut buf).unwrap();
+    //     self.state = hex::encode(buf);
+    //     let mut url = Url::parse("https://appleid.apple.com/auth/authorize").unwrap();
+    //     url.query_pairs_mut()
+    //         .append_pair("response_type", "code id_token")
+    //         .append_pair("client_id", &self.config.client_id)
+    //         .append_pair("redirect_uri", &self.config.redirect_uri)
+    //         .append_pair("state", &self.state)
+    //         .append_pair("scope", &self.config.scope)
+    //         .append_pair("response_mode", "form_post");
+    //     return url;
+    // }
 
-    pub async fn accessToken(&self,code:String) -> Result<AppleResponsePayload, AppleAuthError>{
+    pub async fn access_token(&self,code:String) -> Result<AppleResponsePayload, AppleAuthError>{
         let token = self.client.generate()?;
       
         let payload = AppleRequestPayload{
