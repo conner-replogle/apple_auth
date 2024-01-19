@@ -2,7 +2,12 @@
 name = "apple_auth"
 version = "0.1.0"
 edition = "2021"
-
+license = "MIT"
+keywords = ["apple-sign-in", "apple","oauth","apple-auth","apple-authentication"]
+categories = ["authentication"]
+repository = "https://github.com/conner-replogle/apple_auth"
+readme = "README.md"
+description="A library for authenticating with Apple's Sign In service."
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
